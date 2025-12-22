@@ -124,3 +124,57 @@ enum BucketType {
   FUNDING_BOOST // Recently funded startups
 }
 
+model Subscription {
+  id            String   @id @default(cuid())
+  userId        String?  // Optional user ID for future auth
+  plan          String   // "free", "pro", "enterprise"
+  status        SubscriptionStatus
+  currentPeriodStart DateTime?
+  currentPeriodEnd   DateTime?
+  cancelAtPeriodEnd  Boolean @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  payments      Payment[]
+  
+  @@index([userId])
+  @@index([status])
+}
+
+model Payment {
+  id            String   @id @default(cuid())
+  subscriptionId String?
+  subscription  Subscription? @relation(fields: [subscriptionId], references: [id])
+  
+  amount        Float    // Amount in cents
+  currency      String   @default("usd")
+  status        PaymentStatus
+  paymentMethod String?  // "stripe", "paypal", etc.
+  paymentIntentId String? // Stripe payment intent ID
+  transactionId String?  // External transaction ID
+  
+  metadata      Json?    // Additional payment data
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@index([subscriptionId])
+  @@index([status])
+  @@index([paymentIntentId])
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELED
+  PAST_DUE
+  TRIALING
+  INCOMPLETE
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  REFUNDED
+  CANCELED
+}
+

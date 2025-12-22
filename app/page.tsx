@@ -5,9 +5,10 @@ import { SignalDashboard } from '@/components/dashboard';
 import { ActionBuckets } from '@/components/action-buckets';
 import { SignalIngestionPanel } from '@/components/signal-ingestion';
 import { ICPConfigPanel } from '@/components/icp-config';
+import { PaymentPage } from '@/components/payment-page';
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'buckets' | 'ingestion' | 'config'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'buckets' | 'ingestion' | 'config' | 'payment'>('dashboard');
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
@@ -30,6 +31,7 @@ export default function Home() {
               { id: 'buckets', label: 'Action Buckets' },
               { id: 'ingestion', label: 'Signal Ingestion' },
               { id: 'config', label: 'ICP Config' },
+              { id: 'payment', label: 'Payment' },
             ].map(tab => (
               <button
                 key={tab.id}
@@ -52,6 +54,7 @@ export default function Home() {
         {activeTab === 'buckets' && <ActionBuckets />}
         {activeTab === 'ingestion' && <SignalIngestionPanel />}
         {activeTab === 'config' && <ICPConfigPanel />}
+        {activeTab === 'payment' && <PaymentPage />}
       </main>
     </div>
   );
