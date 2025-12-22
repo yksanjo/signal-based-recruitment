@@ -1,0 +1,126 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Signal {
+  id            String   @id @default(cuid())
+  type          SignalType
+  source        String   // "linkedin", "indeed", "glassdoor", "news", "funding"
+  title         String?
+  companyName   String
+  companyUrl    String?
+  jobUrl        String?
+  location      String?
+  postedDate    DateTime?
+  rawData       Json?
+  processed     Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  enrichments   Enrichment[]
+  bucketAssignments BucketAssignment[]
+  
+  @@index([type, processed])
+  @@index([companyName])
+  @@index([postedDate])
+}
+
+model Enrichment {
+  id            String   @id @default(cuid())
+  signalId      String
+  signal        Signal   @relation(fields: [signalId], references: [id], onDelete: Cascade)
+  
+  companyLinkedInUrl String?
+  employeeCount      Int?
+  employeeCountInTargetCountry Int?
+  industry           String?
+  headquarters       String?
+  fundingAmount      Float?
+  fundingRound       String?
+  fundingDate        DateTime?
+  decisionMakers     Json? // Array of {name, title, email, linkedIn}
+  
+  enrichedAt    DateTime @default(now())
+  
+  @@index([signalId])
+}
+
+model ActionBucket {
+  id            String   @id @default(cuid())
+  type          BucketType @unique
+  name          String
+  description   String?
+  priority      Int      @default(0)
+  threshold     Json?    // Threshold config for this bucket
+  active        Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  assignments   BucketAssignment[]
+  candidates    CandidateProfile[]
+  
+  @@index([type, active])
+}
+
+model BucketAssignment {
+  id            String   @id @default(cuid())
+  bucketId      String
+  bucket        ActionBucket @relation(fields: [bucketId], references: [id], onDelete: Cascade)
+  signalId      String
+  signal        Signal   @relation(fields: [signalId], references: [id], onDelete: Cascade)
+  confidence    Float    @default(0.5) // 0-1 confidence score
+  assignedAt    DateTime @default(now())
+  
+  @@unique([bucketId, signalId])
+  @@index([bucketId])
+  @@index([signalId])
+}
+
+model CandidateProfile {
+  id            String   @id @default(cuid())
+  bucketId      String?
+  bucket        ActionBucket? @relation(fields: [bucketId], references: [id])
+  
+  name          String
+  title         String?
+  company       String?
+  location      String?
+  linkedInUrl   String?
+  email         String?
+  tenure        Int? // months in current role
+  likelihoodToMove Float? // 0-1 score
+  skills        String[] @default([])
+  
+  source        String? // "apollo", "clay", etc.
+  enrichedAt    DateTime @default(now())
+  createdAt     DateTime @default(now())
+  
+  @@index([bucketId])
+  @@index([likelihoodToMove])
+}
+
+enum SignalType {
+  JOB_POSTING
+  FUNDING_ANNOUNCEMENT
+  EXPANSION_SIGNAL
+  HIRING_SPIKE
+  SKILLS_SHIFT
+  MERGER_ACQUISITION
+}
+
+enum BucketType {
+  POACH // Companies undergoing merger/restructuring
+  SCALE // Companies that just hired VP-level, need to scale team
+  SKILLS_SHIFT // Companies changing tech stack
+  EXPANSION // Companies opening new offices
+  FUNDING_BOOST // Recently funded startups
+}
+
