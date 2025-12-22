@@ -8,56 +8,66 @@ import { prisma } from '@/lib/db';
  * Uses BullMQ with Redis for reliable job processing
  */
 export class SignalQueue {
-  private redis: Redis;
-  private queue: Queue;
-  private worker: Worker;
-  private queueEvents: QueueEvents;
+  private redis: Redis | null = null;
+  private queue: Queue | null = null;
+  private worker: Worker | null = null;
+  private queueEvents: QueueEvents | null = null;
+  private initialized = false;
 
-  constructor() {
-    const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
-    this.redis = new Redis(redisUrl, {
-      maxRetriesPerRequest: null,
-      enableReadyCheck: false,
-    });
+  private async initialize() {
+    if (this.initialized) return;
 
-    this.queue = new Queue('signal-collection', {
-      connection: this.redis,
-      defaultJobOptions: {
-        attempts: 3,
-        backoff: {
-          type: 'exponential',
-          delay: 2000,
-        },
-        removeOnComplete: {
-          age: 3600, // Keep completed jobs for 1 hour
-          count: 1000, // Keep last 1000 jobs
-        },
-        removeOnFail: {
-          age: 86400, // Keep failed jobs for 24 hours
-        },
-      },
-    });
+    try {
+      const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
+      this.redis = new Redis(redisUrl, {
+        maxRetriesPerRequest: null,
+        enableReadyCheck: false,
+        lazyConnect: true,
+      });
 
-    this.worker = new Worker(
-      'signal-collection',
-      async (job) => {
-        return await this.processSignalJob(job.data);
-      },
-      {
+      this.queue = new Queue('signal-collection', {
         connection: this.redis,
-        concurrency: 5, // Process 5 jobs concurrently
-        limiter: {
-          max: 10, // Max 10 jobs
-          duration: 1000, // Per second
+        defaultJobOptions: {
+          attempts: 3,
+          backoff: {
+            type: 'exponential',
+            delay: 2000,
+          },
+          removeOnComplete: {
+            age: 3600, // Keep completed jobs for 1 hour
+            count: 1000, // Keep last 1000 jobs
+          },
+          removeOnFail: {
+            age: 86400, // Keep failed jobs for 24 hours
+          },
         },
-      }
-    );
+      });
 
-    this.queueEvents = new QueueEvents('signal-collection', {
-      connection: this.redis,
-    });
+      this.worker = new Worker(
+        'signal-collection',
+        async (job) => {
+          return await this.processSignalJob(job.data);
+        },
+        {
+          connection: this.redis!,
+          concurrency: 5, // Process 5 jobs concurrently
+          limiter: {
+            max: 10, // Max 10 jobs
+            duration: 1000, // Per second
+          },
+        }
+      );
 
-    this.setupEventHandlers();
+      this.queueEvents = new QueueEvents('signal-collection', {
+        connection: this.redis,
+      });
+
+      this.setupEventHandlers();
+      this.initialized = true;
+    } catch (error) {
+      console.warn('Redis not available, queue features disabled:', error);
+      // Queue will be null, but app can still work without it
+    }
   }
 
   async addSignalCollectionJob(data: {
@@ -66,6 +76,10 @@ export class SignalQueue {
     daysBack?: number;
     source?: string;
   }): Promise<string> {
+    await this.initialize();
+    if (!this.queue) {
+      throw new Error('Queue not available. Redis connection required.');
+    }
     const job = await this.queue.add('collect-signals', data, {
       priority: data.source === 'webhook' ? 1 : 2, // Webhooks get higher priority
     });
@@ -78,6 +92,10 @@ export class SignalQueue {
     location?: string;
     daysBack?: number;
   }>): Promise<string[]> {
+    await this.initialize();
+    if (!this.queue) {
+      throw new Error('Queue not available. Redis connection required.');
+    }
     const jobIds: string[] = [];
 
     for (const jobData of jobs) {
@@ -100,8 +118,10 @@ export class SignalQueue {
   }
 
   private setupEventHandlers(): void {
+    if (!this.queueEvents) return;
     this.queueEvents.on('completed', ({ jobId, returnvalue }) => {
-      console.log(`Job ${jobId} completed. Collected ${returnvalue?.count || 0} signals.`);
+      const result = returnvalue as { count?: number } | undefined;
+      console.log(`Job ${jobId} completed. Collected ${result?.count || 0} signals.`);
     });
 
     this.queueEvents.on('failed', ({ jobId, failedReason }) => {
@@ -119,6 +139,10 @@ export class SignalQueue {
     completed: number;
     failed: number;
   }> {
+    await this.initialize();
+    if (!this.queue) {
+      return { waiting: 0, active: 0, completed: 0, failed: 0 };
+    }
     const [waiting, active, completed, failed] = await Promise.all([
       this.queue.getWaitingCount(),
       this.queue.getActiveCount(),
@@ -130,13 +154,14 @@ export class SignalQueue {
   }
 
   async close(): Promise<void> {
-    await Promise.all([
-      this.worker.close(),
-      this.queueEvents.close(),
-      this.queue.close(),
-    ]);
+    if (!this.initialized) return;
+    const promises: Promise<void>[] = [];
+    if (this.worker) promises.push(this.worker.close());
+    if (this.queueEvents) promises.push(this.queueEvents.close());
+    if (this.queue) promises.push(this.queue.close());
+    await Promise.all(promises);
     // Don't quit redis as it might be used elsewhere
-    // await this.redis.quit();
+    // if (this.redis) await this.redis.quit();
   }
 }
 

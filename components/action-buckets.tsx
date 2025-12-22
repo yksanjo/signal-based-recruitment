@@ -108,7 +108,7 @@ export function ActionBuckets() {
             <p className="text-slate-500 text-center py-8">Loading candidates...</p>
           ) : candidates.length === 0 ? (
             <p className="text-slate-500 text-center py-8">
-              No candidates yet. Click "Trigger Workflow" to generate candidate profiles.
+              No candidates yet. Click &quot;Trigger Workflow&quot; to generate candidate profiles.
             </p>
           ) : (
             <div className="space-y-3">

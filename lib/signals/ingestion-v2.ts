@@ -7,7 +7,6 @@ import { RateLimiter } from './rate-limiter';
 import { SignalQueue } from './queue';
 import { JobPosting, Signal } from '@/lib/types';
 import { prisma } from '@/lib/db';
-import pLimit from 'p-limit';
 
 /**
  * Production-grade signal ingestion with:
@@ -25,7 +24,6 @@ export class ProductionSignalIngestion {
   private fundingCollector: FundingSignalCollector;
   private rateLimiter: RateLimiter;
   private queue: SignalQueue;
-  private limit: ReturnType<typeof pLimit>;
 
   constructor() {
     this.serpAPI = new SerpAPICollector();
@@ -34,7 +32,6 @@ export class ProductionSignalIngestion {
     this.fundingCollector = new FundingSignalCollector();
     this.rateLimiter = new RateLimiter();
     this.queue = new SignalQueue();
-    this.limit = pLimit(5); // Process 5 collectors concurrently
   }
 
   /**
@@ -67,8 +64,15 @@ export class ProductionSignalIngestion {
     const sources = filters.sources || ['serpapi', 'scraperapi', 'rss'];
 
     // Collect from multiple sources in parallel with rate limiting
-    const collectionPromises = sources.map(source =>
-      this.limit(async () => {
+    // Process up to 5 sources concurrently
+    const BATCH_SIZE = 5;
+    const sourceBatches = [];
+    for (let i = 0; i < sources.length; i += BATCH_SIZE) {
+      sourceBatches.push(sources.slice(i, i + BATCH_SIZE));
+    }
+
+    for (const batch of sourceBatches) {
+      const collectionPromises = batch.map(async (source) => {
         try {
           // Check rate limit before collecting
           const rateLimitKey = `${source}:${filters.location || 'global'}`;
@@ -101,10 +105,10 @@ export class ProductionSignalIngestion {
           stats.errors++;
           stats.sources[source] = 0;
         }
-      })
-    );
+      });
 
-    await Promise.allSettled(collectionPromises);
+      await Promise.allSettled(collectionPromises);
+    }
 
     // Deduplicate and store signals
     const { signals, duplicates } = await this.deduplicateAndStore(allJobs);

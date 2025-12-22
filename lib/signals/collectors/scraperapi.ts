@@ -68,7 +68,7 @@ export class ScraperAPICollector {
     }
   }
 
-  private extractDate($element: cheerio.Cheerio): Date {
+  private extractDate($element: cheerio.Cheerio<any>): Date {
     const dateText = $element.find('.job-search-card__listdate').text().trim();
     return this.parseRelativeDate(dateText);
   }
