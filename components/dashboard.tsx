@@ -84,24 +84,33 @@ export function SignalDashboard() {
           ) : (
             recentSignals.map(signal => (
               <div
-                key={signal.id}
+                key={signal?.id || Math.random()}
                 className="border border-slate-200 rounded-lg p-4 hover:bg-slate-50 transition"
               >
                 <div className="flex justify-between items-start">
                   <div>
-                    <h3 className="font-medium text-slate-900">{signal.title || signal.type}</h3>
-                    <p className="text-sm text-slate-600 mt-1">{signal.companyName}</p>
-                    {signal.location && (
+                    <h3 className="font-medium text-slate-900">{signal?.title || signal?.type || 'Unknown'}</h3>
+                    <p className="text-sm text-slate-600 mt-1">{signal?.companyName || 'Unknown Company'}</p>
+                    {signal?.location && (
                       <p className="text-xs text-slate-500 mt-1">📍 {signal.location}</p>
                     )}
                   </div>
                   <div className="text-right">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                      {signal.source}
-                    </span>
-                    {signal.postedDate && (
+                    {signal?.source && (
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        {signal.source}
+                      </span>
+                    )}
+                    {signal?.postedDate && (
                       <p className="text-xs text-slate-500 mt-1">
-                        {new Date(signal.postedDate).toLocaleDateString()}
+                        {(() => {
+                          try {
+                            const date = new Date(signal.postedDate);
+                            return isNaN(date.getTime()) ? '' : date.toLocaleDateString();
+                          } catch {
+                            return '';
+                          }
+                        })()}
                       </p>
                     )}
                   </div>

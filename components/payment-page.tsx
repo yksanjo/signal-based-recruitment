@@ -122,7 +122,14 @@ export function PaymentPage() {
               <p className="text-sm text-slate-600">Status: {subscription.status}</p>
               {subscription.currentPeriodEnd && (
                 <p className="text-xs text-slate-500">
-                  Renews: {new Date(subscription.currentPeriodEnd).toLocaleDateString()}
+                  Renews: {(() => {
+                    try {
+                      const date = new Date(subscription.currentPeriodEnd);
+                      return isNaN(date.getTime()) ? 'N/A' : date.toLocaleDateString();
+                    } catch {
+                      return 'N/A';
+                    }
+                  })()}
                 </p>
               )}
             </div>
@@ -204,7 +211,14 @@ export function PaymentPage() {
                     ${(payment.amount / 100).toFixed(2)} {payment.currency.toUpperCase()}
                   </p>
                   <p className="text-sm text-slate-600">
-                    {new Date(payment.createdAt).toLocaleDateString()}
+                    {(() => {
+                      try {
+                        const date = new Date(payment.createdAt);
+                        return isNaN(date.getTime()) ? 'N/A' : date.toLocaleDateString();
+                      } catch {
+                        return 'N/A';
+                      }
+                    })()}
                   </p>
                 </div>
                 <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${

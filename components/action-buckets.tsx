@@ -129,7 +129,7 @@ export function ActionBuckets() {
                     <div>
                       <h3 className="font-medium text-slate-900">{candidate.name}</h3>
                       <p className="text-sm text-slate-600 mt-1">
-                        {candidate.title} at {candidate.company}
+                        {candidate.title || 'N/A'} {candidate.company ? `at ${candidate.company}` : ''}
                       </p>
                       {candidate.location && (
                         <p className="text-xs text-slate-500 mt-1">📍 {candidate.location}</p>
