@@ -20,20 +20,34 @@ export function SignalDashboard() {
   const fetchStats = async () => {
     try {
       const res = await fetch('/api/stats');
+      if (!res.ok) {
+        throw new Error(`Failed to fetch stats: ${res.status}`);
+      }
       const data = await res.json();
       setStats(data);
     } catch (error) {
       console.error('Error fetching stats:', error);
+      // Set default values on error
+      setStats({
+        totalSignals: 0,
+        processedSignals: 0,
+        activeBuckets: 0,
+        totalCandidates: 0,
+      });
     }
   };
 
   const fetchRecentSignals = async () => {
     try {
       const res = await fetch('/api/signals?limit=10');
+      if (!res.ok) {
+        throw new Error(`Failed to fetch signals: ${res.status}`);
+      }
       const data = await res.json();
-      setRecentSignals(data);
+      setRecentSignals(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error fetching signals:', error);
+      setRecentSignals([]);
     }
   };
 
@@ -110,4 +124,7 @@ function StatCard({ title, value, subtitle }: { title: string; value: string | n
     </div>
   );
 }
+
+
+
 

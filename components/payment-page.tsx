@@ -32,24 +32,28 @@ export function PaymentPage() {
   const fetchSubscription = async () => {
     try {
       const res = await fetch('/api/subscription');
-      if (res.ok) {
-        const data = await res.json();
-        setSubscription(data);
+      if (!res.ok) {
+        throw new Error(`Failed to fetch subscription: ${res.status}`);
       }
+      const data = await res.json();
+      setSubscription(data);
     } catch (error) {
       console.error('Error fetching subscription:', error);
+      setSubscription(null);
     }
   };
 
   const fetchPayments = async () => {
     try {
       const res = await fetch('/api/payments');
-      if (res.ok) {
-        const data = await res.json();
-        setPayments(data);
+      if (!res.ok) {
+        throw new Error(`Failed to fetch payments: ${res.status}`);
       }
+      const data = await res.json();
+      setPayments(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error fetching payments:', error);
+      setPayments([]);
     }
   };
 
@@ -65,17 +69,18 @@ export function PaymentPage() {
         body: JSON.stringify({ plan }),
       });
 
-      if (res.ok) {
-        const data = await res.json();
-        if (data.paymentIntent) {
-          // In production, redirect to Stripe Checkout or handle payment
-          alert(`Payment intent created: ${data.paymentIntent.id}\n\nIn production, this would redirect to Stripe Checkout.`);
-          await fetchSubscription();
-          await fetchPayments();
-        }
-      } else {
-        const errorData = await res.json();
-        setError(errorData.error || 'Failed to create payment');
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        setError(errorData.error || `Failed to create payment: ${res.status}`);
+        return;
+      }
+      
+      const data = await res.json();
+      if (data.paymentIntent) {
+        // In production, redirect to Stripe Checkout or handle payment
+        alert(`Payment intent created: ${data.paymentIntent.id}\n\nIn production, this would redirect to Stripe Checkout.`);
+        await fetchSubscription();
+        await fetchPayments();
       }
     } catch (error: any) {
       setError(error.message || 'Failed to process payment');
@@ -219,4 +224,7 @@ export function PaymentPage() {
     </div>
   );
 }
+
+
+
 

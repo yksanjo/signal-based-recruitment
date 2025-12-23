@@ -22,10 +22,14 @@ export function ActionBuckets() {
   const fetchBuckets = async () => {
     try {
       const res = await fetch('/api/buckets');
+      if (!res.ok) {
+        throw new Error(`Failed to fetch buckets: ${res.status}`);
+      }
       const data = await res.json();
-      setBuckets(data);
+      setBuckets(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error fetching buckets:', error);
+      setBuckets([]);
     }
   };
 
@@ -33,10 +37,14 @@ export function ActionBuckets() {
     setLoading(true);
     try {
       const res = await fetch(`/api/buckets/${bucketId}/candidates`);
+      if (!res.ok) {
+        throw new Error(`Failed to fetch candidates: ${res.status}`);
+      }
       const data = await res.json();
-      setCandidates(data);
+      setCandidates(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error fetching candidates:', error);
+      setCandidates([]);
     } finally {
       setLoading(false);
     }

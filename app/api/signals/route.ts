@@ -28,12 +28,10 @@ export async function GET(request: NextRequest) {
       postedDate: s.postedDate,
       processed: s.processed,
     })));
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error fetching signals:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch signals' },
-      { status: 500 }
-    );
+    // Return empty array instead of error to prevent client-side crashes
+    return NextResponse.json([]);
   }
 }
 
