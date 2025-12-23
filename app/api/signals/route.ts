@@ -1,37 +1,54 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/db';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
   try {
+    // Check if database is available
+    if (!process.env.DATABASE_URL) {
+      return NextResponse.json([], { status: 200 });
+    }
+
+    // Dynamically import prisma to avoid initialization errors
+    const { prisma } = await import('@/lib/db');
+    
+    // Check if prisma is properly initialized
+    if (!prisma || !prisma.signal) {
+      return NextResponse.json([], { status: 200 });
+    }
+    
     const searchParams = request.nextUrl.searchParams;
     const limit = parseInt(searchParams.get('limit') || '10');
 
-    const signals = await prisma.signal.findMany({
-      take: limit,
-      orderBy: { createdAt: 'desc' },
-      include: {
-        enrichments: true,
-      },
-    });
+    try {
+      const signals = await prisma.signal.findMany({
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          enrichments: true,
+        },
+      }).catch(() => []);
 
-    return NextResponse.json(signals.map(s => ({
-      id: s.id,
-      type: s.type,
-      source: s.source,
-      title: s.title,
-      companyName: s.companyName,
-      companyUrl: s.companyUrl,
-      jobUrl: s.jobUrl,
-      location: s.location,
-      postedDate: s.postedDate,
-      processed: s.processed,
-    })));
+      return NextResponse.json((signals || []).map((s: any) => ({
+        id: s.id,
+        type: s.type,
+        source: s.source,
+        title: s.title,
+        companyName: s.companyName,
+        companyUrl: s.companyUrl,
+        jobUrl: s.jobUrl,
+        location: s.location,
+        postedDate: s.postedDate,
+        processed: s.processed,
+      })));
+    } catch (dbError: any) {
+      console.error('Database error fetching signals:', dbError);
+      return NextResponse.json([], { status: 200 });
+    }
   } catch (error: any) {
     console.error('Error fetching signals:', error);
-    // Return empty array instead of error to prevent client-side crashes
-    return NextResponse.json([]);
+    // Always return empty array with 200 status to prevent client-side crashes
+    return NextResponse.json([], { status: 200 });
   }
 }
 

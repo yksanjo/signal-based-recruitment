@@ -210,3 +210,6 @@ curl -X POST https://your-project.vercel.app/api/webhooks/signals \
   -d '{"type":"funding","company_name":"TestCorp","amount":1000000}'
 ```
 
+
+
+

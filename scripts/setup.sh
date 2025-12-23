@@ -49,3 +49,6 @@ echo "2. Run 'npx prisma migrate dev' if you haven't already"
 echo "3. Run 'npm run dev' to start the development server"
 echo "4. Open http://localhost:3000 in your browser"
 
+
+
+
