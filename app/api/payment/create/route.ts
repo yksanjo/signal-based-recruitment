@@ -1,16 +1,44 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/db';
 
 export const dynamic = 'force-dynamic';
 
 const PLAN_PRICES: Record<string, number> = {
   free: 0,
-  pro: 9900, // $99.00 in cents
-  enterprise: 49900, // $499.00 in cents
+  pro: 99.00, // $99.00 (Float in database)
+  enterprise: 499.00, // $499.00 (Float in database)
 };
 
 export async function POST(request: NextRequest) {
   try {
+    // Check if database is available
+    if (!process.env.DATABASE_URL) {
+      return NextResponse.json(
+        { error: 'Database not configured. Please set DATABASE_URL environment variable.' },
+        { status: 503 }
+      );
+    }
+
+    // Dynamically import prisma to avoid initialization errors
+    let prisma;
+    try {
+      const dbModule = await import('@/lib/db');
+      prisma = dbModule.prisma;
+    } catch (importError: any) {
+      console.error('Failed to import prisma:', importError);
+      return NextResponse.json(
+        { error: 'Database connection failed' },
+        { status: 503 }
+      );
+    }
+
+    // Check if prisma is properly initialized
+    if (!prisma || typeof prisma !== 'object' || !prisma.subscription) {
+      return NextResponse.json(
+        { error: 'Database not initialized' },
+        { status: 503 }
+      );
+    }
+
     const body = await request.json();
     const { plan } = body;
 
@@ -100,8 +128,13 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Error creating payment:', error);
+    // Return user-friendly error message
     return NextResponse.json(
-      { error: 'Failed to create payment', details: error.message },
+      { 
+        error: 'Failed to create payment', 
+        details: error.message || 'Unknown error',
+        message: 'Please ensure DATABASE_URL is configured correctly'
+      },
       { status: 500 }
     );
   }

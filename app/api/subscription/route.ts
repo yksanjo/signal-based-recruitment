@@ -1,10 +1,29 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/db';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
+    // Check if database is available
+    if (!process.env.DATABASE_URL) {
+      return NextResponse.json(null, { status: 200 });
+    }
+
+    // Dynamically import prisma
+    let prisma;
+    try {
+      const dbModule = await import('@/lib/db');
+      prisma = dbModule.prisma;
+    } catch (importError: any) {
+      console.error('Failed to import prisma:', importError);
+      return NextResponse.json(null, { status: 200 });
+    }
+
+    // Check if prisma is properly initialized
+    if (!prisma || typeof prisma !== 'object' || !prisma.subscription) {
+      return NextResponse.json(null, { status: 200 });
+    }
+
     // Get or create a default subscription (for demo purposes)
     // In production, this would be tied to a user ID
     let subscription = await prisma.subscription.findFirst({
@@ -14,7 +33,7 @@ export async function GET() {
       orderBy: {
         createdAt: 'desc',
       },
-    });
+    }).catch(() => null);
 
     if (!subscription) {
       // Create a free subscription by default
@@ -25,7 +44,11 @@ export async function GET() {
           currentPeriodStart: new Date(),
           currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
         },
-      });
+      }).catch(() => null);
+    }
+
+    if (!subscription) {
+      return NextResponse.json(null, { status: 200 });
     }
 
     return NextResponse.json({
@@ -38,15 +61,41 @@ export async function GET() {
     });
   } catch (error: any) {
     console.error('Error fetching subscription:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch subscription', details: error.message },
-      { status: 500 }
-    );
+    return NextResponse.json(null, { status: 200 });
   }
 }
 
 export async function POST(request: Request) {
   try {
+    // Check if database is available
+    if (!process.env.DATABASE_URL) {
+      return NextResponse.json(
+        { error: 'Database not configured' },
+        { status: 503 }
+      );
+    }
+
+    // Dynamically import prisma
+    let prisma;
+    try {
+      const dbModule = await import('@/lib/db');
+      prisma = dbModule.prisma;
+    } catch (importError: any) {
+      console.error('Failed to import prisma:', importError);
+      return NextResponse.json(
+        { error: 'Database connection failed' },
+        { status: 503 }
+      );
+    }
+
+    // Check if prisma is properly initialized
+    if (!prisma || typeof prisma !== 'object' || !prisma.subscription) {
+      return NextResponse.json(
+        { error: 'Database not initialized' },
+        { status: 503 }
+      );
+    }
+
     const body = await request.json();
     const { plan, status } = body;
 
@@ -66,7 +115,17 @@ export async function POST(request: Request) {
         status,
         currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
       },
+    }).catch((err: any) => {
+      console.error('Database error:', err);
+      return null;
     });
+
+    if (!subscription) {
+      return NextResponse.json(
+        { error: 'Failed to update subscription' },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json({
       success: true,
