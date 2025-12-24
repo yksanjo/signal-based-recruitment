@@ -53,12 +53,33 @@ export function SignalDashboard() {
   const fetchRecentSignals = async () => {
     try {
       const res = await fetch('/api/signals?limit=10');
-      const data = await res.json().catch(() => []);
+      
+      // Check response status
+      if (!res.ok) {
+        console.warn(`API returned ${res.status}, using empty array`);
+        setRecentSignals([]);
+        return;
+      }
+      
+      // Parse JSON with fallback
+      let data;
+      try {
+        const text = await res.text();
+        data = text ? JSON.parse(text) : [];
+      } catch (parseError) {
+        console.error('Failed to parse JSON:', parseError);
+        setRecentSignals([]);
+        return;
+      }
       
       // Always ensure we have an array
       if (Array.isArray(data)) {
         setRecentSignals(data);
+      } else if (data && Array.isArray(data.signals)) {
+        // Handle wrapped response format
+        setRecentSignals(data.signals);
       } else {
+        console.warn('API returned non-array data:', typeof data, data);
         setRecentSignals([]);
       }
     } catch (error) {
