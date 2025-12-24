@@ -12,30 +12,30 @@ export function SignalIntelligenceLogo({ className = '' }: { className?: string 
         xmlns="http://www.w3.org/2000/svg"
         className="mb-2"
       >
-        {/* Outermost line (medium blue) - starts bottom left, curves to top right */}
+        {/* Outermost line (medium blue) - S curve from bottom left to top right */}
         <path
-          d="M 6 42 Q 24 8, 42 8"
+          d="M 8 40 Q 12 20, 24 22 Q 36 24, 40 8"
           stroke="#3B82F6"
           strokeWidth="2.5"
           fill="none"
           strokeLinecap="round"
         />
-        <circle cx="42" cy="8" r="2.5" fill="#3B82F6" />
+        <circle cx="40" cy="8" r="2.5" fill="#3B82F6" />
         
-        {/* Middle line (lighter blue) - parallel path */}
+        {/* Middle line (lighter blue) - parallel S curve */}
         <path
-          d="M 8 40 Q 24 10, 40 10"
+          d="M 10 38 Q 14 22, 24 24 Q 34 26, 38 10"
           stroke="#60A5FA"
           strokeWidth="2.5"
           fill="none"
           strokeLinecap="round"
         />
-        <circle cx="40" cy="10" r="2.5" fill="#60A5FA" />
+        <circle cx="38" cy="10" r="2.5" fill="#60A5FA" />
         
         {/* Innermost line (vibrant green) - starts with dot, ends with arrowhead */}
-        <circle cx="10" cy="38" r="2.5" fill="#10B981" />
+        <circle cx="12" cy="36" r="2.5" fill="#10B981" />
         <path
-          d="M 10 38 Q 24 12, 38 12"
+          d="M 12 36 Q 16 24, 24 26 Q 32 28, 36 12"
           stroke="#10B981"
           strokeWidth="2.5"
           fill="none"
@@ -43,15 +43,14 @@ export function SignalIntelligenceLogo({ className = '' }: { className?: string 
         />
         {/* Arrowhead pointing up and right */}
         <path
-          d="M 38 12 L 42 8 L 40 10 L 42 12"
+          d="M 36 12 L 40 8 M 36 12 L 38 10"
           stroke="#10B981"
-          strokeWidth="2.5"
-          fill="#10B981"
+          strokeWidth="3"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
         <polygon
-          points="38,12 42,8 40,10"
+          points="36,12 40,8 38,10"
           fill="#10B981"
         />
       </svg>
