@@ -11,21 +11,21 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'buckets' | 'ingestion' | 'config' | 'payment'>('dashboard');
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-      <header className="bg-white border-b border-slate-200 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <h1 className="text-3xl font-bold text-slate-900">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-cyan-50">
+      <header className="bg-gradient-to-r from-indigo-600 to-blue-600 text-white shadow-lg">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <h1 className="text-4xl font-bold text-white drop-shadow-md">
             Signal-Based Recruitment Sourcing
           </h1>
-          <p className="text-slate-600 mt-1">
+          <p className="text-indigo-100 mt-2 text-lg">
             High-velocity event stream for recruitment intelligence
           </p>
         </div>
       </header>
 
-      <nav className="bg-white border-b border-slate-200">
+      <nav className="bg-white border-b-2 border-indigo-100 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex space-x-8">
+          <div className="flex space-x-1">
             {[
               { id: 'dashboard', label: 'Dashboard' },
               { id: 'buckets', label: 'Action Buckets' },
@@ -36,10 +36,10 @@ export default function Home() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                className={`py-4 px-4 border-b-2 font-semibold text-sm transition-all ${
                   activeTab === tab.id
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+                    ? 'border-indigo-600 text-indigo-700 bg-indigo-50'
+                    : 'border-transparent text-gray-600 hover:text-indigo-600 hover:border-indigo-300 hover:bg-indigo-50/50'
                 }`}
               >
                 {tab.label}

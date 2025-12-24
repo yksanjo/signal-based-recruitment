@@ -124,33 +124,35 @@ export function SignalDashboard() {
         />
       </div>
 
-      <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-xl font-semibold mb-4">Recent Signals</h2>
+      <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6">
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">Recent Signals</h2>
         <div className="space-y-3">
           {recentSignals.length === 0 ? (
-            <p className="text-slate-500 text-center py-8">No signals yet. Start ingesting signals to see them here.</p>
+            <div className="text-center py-12 bg-gradient-to-br from-indigo-50 to-blue-50 rounded-lg border-2 border-dashed border-indigo-200">
+              <p className="text-gray-600 font-medium">No signals yet. Start ingesting signals to see them here.</p>
+            </div>
           ) : (
             recentSignals.map(signal => (
               <div
                 key={signal?.id || Math.random()}
-                className="border border-slate-200 rounded-lg p-4 hover:bg-slate-50 transition"
+                className="border-2 border-gray-200 rounded-xl p-5 hover:border-indigo-300 hover:bg-indigo-50/30 transition-all shadow-sm hover:shadow-md"
               >
                 <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="font-medium text-slate-900">{signal?.title || signal?.type || 'Unknown'}</h3>
-                    <p className="text-sm text-slate-600 mt-1">{signal?.companyName || 'Unknown Company'}</p>
+                  <div className="flex-1">
+                    <h3 className="font-bold text-gray-900 text-lg">{signal?.title || signal?.type || 'Unknown'}</h3>
+                    <p className="text-sm text-gray-700 mt-1 font-medium">{signal?.companyName || 'Unknown Company'}</p>
                     {signal?.location && (
-                      <p className="text-xs text-slate-500 mt-1">📍 {signal.location}</p>
+                      <p className="text-sm text-gray-600 mt-2 font-medium">📍 {signal.location}</p>
                     )}
                   </div>
-                  <div className="text-right">
+                  <div className="text-right ml-4">
                     {signal?.source && (
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                      <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold bg-gradient-to-r from-indigo-500 to-blue-500 text-white shadow-sm">
                         {signal.source}
                       </span>
                     )}
                     {signal?.postedDate && (
-                      <p className="text-xs text-slate-500 mt-1">
+                      <p className="text-xs text-gray-600 mt-2 font-medium">
                         {(() => {
                           try {
                             const date = new Date(signal.postedDate);
@@ -174,10 +176,10 @@ export function SignalDashboard() {
 
 function StatCard({ title, value, subtitle }: { title: string; value: string | number; subtitle: string }) {
   return (
-    <div className="bg-white rounded-lg shadow p-6">
-      <h3 className="text-sm font-medium text-slate-600">{title}</h3>
-      <p className="text-3xl font-bold text-slate-900 mt-2">{value}</p>
-      <p className="text-xs text-slate-500 mt-1">{subtitle}</p>
+    <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow border border-gray-100 p-6">
+      <h3 className="text-sm font-semibold text-gray-600 uppercase tracking-wide">{title}</h3>
+      <p className="text-4xl font-bold text-gray-900 mt-3">{value}</p>
+      <p className="text-sm text-gray-500 mt-2 font-medium">{subtitle}</p>
     </div>
   );
 }
