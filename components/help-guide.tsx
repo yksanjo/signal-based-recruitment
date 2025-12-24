@@ -59,7 +59,7 @@ export function HelpGuide() {
             <h2 className="text-2xl font-bold text-gray-900 mb-3">Step 3: View Your Dashboard</h2>
             <ol className="list-decimal list-inside space-y-2 text-gray-700">
               <li>Click on the <strong className="text-green-600">&quot;Dashboard&quot;</strong> tab (default view)</li>
-              <li>You'll see:
+              <li>You&apos;ll see:
                 <ul className="list-disc list-inside ml-6 mt-2 space-y-1">
                   <li><strong>Total Signals</strong>: Number of signals collected</li>
                   <li><strong>Processed Signals</strong>: Signals that have been analyzed</li>
