@@ -77,7 +77,7 @@ export function HelpGuide() {
             <h2 className="text-2xl font-bold text-gray-900 mb-3">Step 4: Review Action Buckets</h2>
             <ol className="list-decimal list-inside space-y-2 text-gray-700">
               <li>Click on the <strong className="text-purple-600">&quot;Action Buckets&quot;</strong> tab</li>
-              <li>You'll see signals grouped into categories:
+              <li>You&apos;ll see signals grouped into categories:
                 <ul className="list-disc list-inside ml-6 mt-2 space-y-1">
                   <li><strong>POACH</strong>: Companies undergoing merger/restructuring</li>
                   <li><strong>SCALE</strong>: Companies that just hired VP-level, need to scale team</li>
