@@ -52,9 +52,14 @@ export function SignalDashboard() {
 
   const fetchRecentSignals = async () => {
     try {
-      const res = await fetch('/api/signals?limit=10');
+      const res = await fetch('/api/signals?limit=10', {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache',
+        },
+      });
       
-      // Check response status
+      // Check response status - if not ok, use empty array
       if (!res.ok) {
         console.warn(`API returned ${res.status}, using empty array`);
         setRecentSignals([]);
@@ -65,25 +70,31 @@ export function SignalDashboard() {
       let data;
       try {
         const text = await res.text();
-        data = text ? JSON.parse(text) : [];
+        if (!text || text.trim() === '') {
+          data = [];
+        } else {
+          data = JSON.parse(text);
+        }
       } catch (parseError) {
         console.error('Failed to parse JSON:', parseError);
         setRecentSignals([]);
         return;
       }
       
-      // Always ensure we have an array
+      // ALWAYS ensure we have an array before using .map()
       if (Array.isArray(data)) {
         setRecentSignals(data);
-      } else if (data && Array.isArray(data.signals)) {
+      } else if (data && typeof data === 'object' && Array.isArray(data.signals)) {
         // Handle wrapped response format
         setRecentSignals(data.signals);
       } else {
         console.warn('API returned non-array data:', typeof data, data);
+        // Force to empty array to prevent .map() errors
         setRecentSignals([]);
       }
     } catch (error) {
       console.error('Error fetching signals:', error);
+      // Always set to empty array on any error
       setRecentSignals([]);
     }
   };
