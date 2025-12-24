@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Zap, Bell } from 'lucide-react';
+import { Bell } from 'lucide-react';
+import { SignalIntelligenceLogo } from '@/components/logo';
 import { SignalDashboard } from '@/components/dashboard';
 import { ActionBuckets } from '@/components/action-buckets';
 import { SignalIngestionPanel } from '@/components/signal-ingestion';
@@ -46,9 +47,9 @@ export default function Home() {
           <div className="max-w-[1600px] mx-auto px-8 py-5">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-4">
-                <div className="relative w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-cyan-500/50">
-                  <Zap className="w-7 h-7 text-white" />
-                  <div className="absolute inset-0 bg-cyan-400/30 rounded-xl blur animate-pulse"></div>
+                <div className="relative bg-gradient-to-br from-slate-900/80 to-slate-800/80 rounded-xl p-3 flex items-center justify-center shadow-lg border border-cyan-500/20">
+                  <SignalIntelligenceLogo />
+                  <div className="absolute inset-0 bg-cyan-400/10 rounded-xl blur animate-pulse"></div>
                 </div>
                 <div>
                   <h1 className="text-2xl font-bold bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
