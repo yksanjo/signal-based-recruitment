@@ -56,22 +56,23 @@ export function ICPConfigPanel() {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow p-6">
-      <h2 className="text-xl font-semibold mb-4">Ideal Customer Profile (ICP) Configuration</h2>
-      <div className="space-y-4">
+    <div className="bg-gradient-to-br from-slate-900/50 to-slate-900/30 backdrop-blur-xl border border-slate-800 rounded-3xl p-8"
+         style={{ boxShadow: '0 0 0 1px rgba(6, 182, 212, 0.1), 0 20px 40px -20px rgba(0, 0, 0, 0.5)' }}>
+      <h2 className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent mb-6">Ideal Customer Profile (ICP) Configuration</h2>
+      <div className="space-y-5">
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">
+          <label className="block text-sm font-bold text-slate-400 mb-3 uppercase tracking-wide">
             Target Country
           </label>
           <input
             type="text"
             value={config.targetCountry}
             onChange={(e) => setConfig({ ...config, targetCountry: e.target.value })}
-            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-3 bg-slate-800/50 border-2 border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 text-white placeholder-slate-500 font-medium transition-all"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">
+          <label className="block text-sm font-bold text-slate-400 mb-3 uppercase tracking-wide">
             Excluded HQ Countries (comma-separated)
           </label>
           <input
@@ -81,11 +82,11 @@ export function ICPConfigPanel() {
               ...config,
               excludedHQCountries: e.target.value.split(',').map(s => s.trim()),
             })}
-            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-3 bg-slate-800/50 border-2 border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 text-white placeholder-slate-500 font-medium transition-all"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">
+          <label className="block text-sm font-bold text-slate-400 mb-3 uppercase tracking-wide">
             Minimum Job Title Level (comma-separated)
           </label>
           <input
@@ -95,11 +96,11 @@ export function ICPConfigPanel() {
               ...config,
               minJobTitleLevel: e.target.value.split(',').map(s => s.trim()),
             })}
-            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-3 bg-slate-800/50 border-2 border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 text-white placeholder-slate-500 font-medium transition-all"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">
+          <label className="block text-sm font-bold text-slate-400 mb-3 uppercase tracking-wide">
             Required Languages (comma-separated)
           </label>
           <input
@@ -109,11 +110,11 @@ export function ICPConfigPanel() {
               ...config,
               requiredLanguages: e.target.value.split(',').map(s => s.trim()),
             })}
-            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-3 bg-slate-800/50 border-2 border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 text-white placeholder-slate-500 font-medium transition-all"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">
+          <label className="block text-sm font-bold text-slate-400 mb-3 uppercase tracking-wide">
             Max Employees in Target Country
           </label>
           <input
@@ -123,11 +124,11 @@ export function ICPConfigPanel() {
               ...config,
               maxEmployeesInTargetCountry: parseInt(e.target.value),
             })}
-            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-3 bg-slate-800/50 border-2 border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 text-white placeholder-slate-500 font-medium transition-all"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">
+          <label className="block text-sm font-bold text-slate-400 mb-3 uppercase tracking-wide">
             Industries (comma-separated)
           </label>
           <input
@@ -137,11 +138,11 @@ export function ICPConfigPanel() {
               ...config,
               industries: e.target.value.split(',').map(s => s.trim()),
             })}
-            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-3 bg-slate-800/50 border-2 border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 text-white placeholder-slate-500 font-medium transition-all"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">
+          <label className="block text-sm font-bold text-slate-400 mb-3 uppercase tracking-wide">
             Minimum Funding Amount
           </label>
           <input
@@ -151,13 +152,13 @@ export function ICPConfigPanel() {
               ...config,
               minFundingAmount: parseInt(e.target.value),
             })}
-            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-3 bg-slate-800/50 border-2 border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 text-white placeholder-slate-500 font-medium transition-all"
           />
         </div>
         <button
           onClick={handleSave}
           disabled={saving}
-          className="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-6 py-4 rounded-xl hover:shadow-lg hover:shadow-cyan-500/30 disabled:opacity-50 disabled:cursor-not-allowed font-bold text-lg transition-all duration-300 hover:scale-[1.02]"
         >
           {saving ? 'Saving...' : 'Save Configuration'}
         </button>
