@@ -1,5 +1,9 @@
 # Signal-Based Recruitment Sourcing Platform
 
+[![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-yellow.svg)](https://www.javascript.com/) [![GitHub stars](https://img.shields.io/github/stars/yksanjo/signal-based-recruitment?style=social)](https://github.com/yksanjo/signal-based-recruitment/stargazers) [![GitHub forks](https://img.shields.io/github/forks/yksanjo/signal-based-recruitment.svg)](https://github.com/yksanjo/signal-based-recruitment/network/members) [![GitHub issues](https://img.shields.io/github/issues/yksanjo/signal-based-recruitment.svg)](https://github.com/yksanjo/signal-based-recruitment/issues)
+[![Last commit](https://img.shields.io/github/last-commit/yksanjo/signal-based-recruitment.svg)](https://github.com/yksanjo/signal-based-recruitment/commits/main)
+
+
 A high-velocity event stream system for recruitment intelligence that replaces data-heavy scraping with signal-based architecture.
 
 ## Architecture
