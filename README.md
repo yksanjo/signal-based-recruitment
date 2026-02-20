@@ -1,187 +1,198 @@
 # Signal-Based Recruitment Sourcing Platform
 
-[![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-yellow.svg)](https://www.javascript.com/) [![GitHub stars](https://img.shields.io/github/stars/yksanjo/signal-based-recruitment?style=social)](https://github.com/yksanjo/signal-based-recruitment/stargazers) [![GitHub forks](https://img.shields.io/github/forks/yksanjo/signal-based-recruitment.svg)](https://github.com/yksanjo/signal-based-recruitment/network/members) [![GitHub issues](https://img.shields.io/github/issues/yksanjo/signal-based-recruitment.svg)](https://github.com/yksanjo/signal-based-recruitment/issues)
-[![Last commit](https://img.shields.io/github/last-commit/yksanjo/signal-based-recruitment.svg)](https://github.com/yksanjo/signal-based-recruitment/commits/main)
-![License](https://img.shields.io/badge/license-MIT-green.svg)
+[![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-yellow.svg)](https://www.javascript.com/) [![Next.js](https://img.shields.io/badge/Next.js-14-black.svg)](https://nextjs.org/) [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue.svg)](https://www.typescriptlang.org/) [![GitHub last commit](https://img.shields.io/github/last-commit/yksanjo/signal-based-recruitment.svg)](https://github.com/yksanjo/signal-based-recruitment/commits/main) [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-## 📸 Screenshots
+> **Status**: MVP/Prototype - 22 commits of original work
 
-### Main Dashboard
-![Dashboard](screenshots/dashboard.png)
-*Main interface and key features*
+## 🎯 What It Is
 
-### Additional Views
-![Features](screenshots/features.png)
-*Additional functionality and views*
+A high-velocity event stream system for recruitment intelligence that replaces traditional data-heavy scraping with a signal-based architecture. Instead of scraping everything, it monitors high-intent public signals and triggers actions only when meaningful patterns emerge.
 
-> **Note**: Screenshots will be added to the `screenshots/` directory. To add your own:
-> 1. Take screenshots of your application
-> 2. Save them in a `screenshots/` folder  
-> 3. Update the image paths above
+## 🏗️ Architecture Overview
 
+### 3-Layer Signal Processing System
 
-A high-velocity event stream system for recruitment intelligence that replaces data-heavy scraping with signal-based architecture.
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    Signal Ingestion Layer                    │
+│  (The "Sensor") - Monitors high-intent public signals       │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    Logistics Engine                          │
+│  (The "Sorter") - Groups signals into "Action Buckets"      │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    Orchestration Layer                       │
+│  (The "Agent") - Triggers workflows when thresholds hit     │
+└─────────────────────────────────────────────────────────────┘
+```
 
-## Architecture
+### Key Components
 
-### 3-Layer System
+1. **Signal Sources**: LinkedIn, Indeed, Glassdoor job postings
+2. **Company Enrichment**: Apollo.io API integration
+3. **ICP Filtering**: Ideal Customer Profile-based filtering
+4. **Action Buckets**: Intelligent grouping of signals
+5. **Candidate Generation**: On-demand profile generation
+6. **Scoring Engine**: Likelihood-to-move scoring algorithm
 
-1. **Signal Ingestion Layer (The "Sensor")**
-   - Monitors high-intent public signals from LinkedIn, Indeed, Glassdoor
-   - Tracks job postings, funding announcements, expansion signals
-   - Lightweight, real-time event stream
+## ✨ Features
 
-2. **Logistics Engine (The "Sorter")**
-   - Groups signals into "Action Buckets"
-   - Filters by ICP (Ideal Customer Profile)
-   - Clusters by company characteristics
+### ✅ Implemented
+- Multi-source job posting ingestion architecture
+- Company enrichment via Apollo API (mock available)
+- ICP-based filtering and compliance checking
+- Action bucket assignment system
+- Real-time dashboard and visualization
+- PostgreSQL database with Prisma ORM
+- Next.js 14 App Router with TypeScript
 
-3. **Orchestration Layer (The "Agent")**
-   - Triggers workflows when signals hit thresholds
-   - Fetches targeted candidate profiles on-demand
-   - Scores candidates by likelihood to move
+### 🔄 In Progress
+- Production scraping integrations
+- Advanced candidate scoring algorithms
+- Workflow automation triggers
+- Team collaboration features
 
-## Features
-
-- ✅ Multi-source job posting ingestion (LinkedIn, Indeed, Glassdoor)
-- ✅ Company enrichment via Apollo API
-- ✅ ICP-based filtering and compliance checking
-- ✅ Action bucket assignment (Poach, Scale, Skills Shift, Expansion, Funding Boost)
-- ✅ On-demand candidate profile generation
-- ✅ Likelihood-to-move scoring
-- ✅ Real-time dashboard and visualization
-
-## Setup
+## 🚀 Quick Start
 
 ### Prerequisites
-
 - Node.js 18+
 - PostgreSQL database
-- Apollo.io API key (optional, uses mock data if not provided)
+- (Optional) Apollo.io API key for company enrichment
 
 ### Installation
 
-1. Install dependencies:
 ```bash
+# Clone the repository
+git clone https://github.com/yksanjo/signal-based-recruitment.git
+cd signal-based-recruitment
+
+# Install dependencies
 npm install
-```
 
-2. Set up environment variables:
-```bash
-cp .env.example .env
-```
+# Set up environment
+cp .env.example .env.local
+# Edit .env.local with your database credentials
 
-Edit `.env`:
-```
-DATABASE_URL="postgresql://user:password@localhost:5432/signal_recruitment"
-APOLLO_API_KEY="your_apollo_api_key" # Optional
-CLAY_API_KEY="your_clay_api_key" # Optional
-```
-
-3. Set up database:
-```bash
+# Set up database
 npx prisma generate
 npx prisma migrate dev
-```
 
-4. Run development server:
-```bash
+# Start development server
 npm run dev
 ```
 
-5. Open [http://localhost:3000](http://localhost:3000)
+Open [http://localhost:3000](http://localhost:3000) to see the application.
 
-## Deployment to Vercel
+## 📊 Technical Stack
 
+- **Frontend**: Next.js 14, React, TypeScript, Tailwind CSS
+- **Backend**: Next.js API Routes, Prisma ORM
+- **Database**: PostgreSQL
+- **Authentication**: (Planned) NextAuth.js
+- **Deployment**: Vercel-ready configuration
+- **API Integrations**: Apollo.io, Clay.com (mock implementations)
+
+## 🏭 Project Structure
+
+```
+signal-based-recruitment/
+├── app/                    # Next.js 14 App Router
+│   ├── api/               # API routes
+│   ├── (dashboard)/       # Dashboard pages
+│   └── layout.tsx         # Root layout
+├── components/            # React components
+├── lib/                   # Utility libraries
+│   ├── db.ts             # Database client
+│   ├── signals/          # Signal processing logic
+│   └── enrichment/       # Company enrichment
+├── prisma/               # Database schema
+│   └── schema.prisma     # Prisma schema
+└── public/               # Static assets
+```
+
+## 🔧 Development
+
+### Database Operations
+```bash
+# Generate Prisma client
+npx prisma generate
+
+# Run migrations
+npx prisma migrate dev
+
+# Open Prisma Studio
+npx prisma studio
+```
+
+### Testing
+```bash
+# Run tests (when implemented)
+npm test
+
+# Run with coverage
+npm test -- --coverage
+```
+
+### Building for Production
+```bash
+# Build the application
+npm run build
+
+# Start production server
+npm start
+```
+
+## 📈 Deployment
+
+### Vercel (Recommended)
 1. Push your code to GitHub
 2. Import project in Vercel
 3. Add environment variables in Vercel dashboard
-4. Deploy!
+4. Connect your PostgreSQL database
+5. Deploy!
 
-The app is configured for Vercel with:
-- Next.js 14 App Router
-- PostgreSQL via Prisma
-- Serverless API routes
+The application includes:
+- `vercel.json` configuration
+- Serverless function optimization
+- Edge middleware ready
 
-## Usage
+### Self-Hosted
+1. Build the application: `npm run build`
+2. Set up PostgreSQL database
+3. Configure environment variables
+4. Use PM2 or similar process manager
+5. Set up reverse proxy (Nginx, Caddy)
 
-### 1. Configure ICP
+## 🤝 Contributing
 
-Navigate to "ICP Config" tab and set your Ideal Customer Profile:
-- Target country
-- Excluded HQ countries
-- Job title levels
-- Industries
-- Employee count limits
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Commit your changes: `git commit -m 'Add amazing feature'`
+4. Push to the branch: `git push origin feature/amazing-feature`
+5. Open a Pull Request
 
-### 2. Ingest Signals
+## 📄 License
 
-Go to "Signal Ingestion" tab:
-- Enter keywords (e.g., "Head of Engineering, VP of Sales")
-- Set location (e.g., "Brazil")
-- Set days back (e.g., 30)
-- Click "Ingest Signals"
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-### 3. View Action Buckets
+## 🙏 Acknowledgments
 
-Navigate to "Action Buckets" tab:
-- See signals grouped into buckets
-- Click on a bucket to view details
-- Click "Trigger Workflow" to generate candidate profiles
+- Built with Next.js 14 and the App Router
+- Database management with Prisma ORM
+- UI components with Tailwind CSS
+- Inspired by modern recruitment intelligence platforms
 
-### 4. Monitor Dashboard
+## 📞 Contact
 
-The dashboard shows:
-- Total signals processed
-- Active buckets
-- Candidate count
-- Recent signals
+Yoshi Kondo - [GitHub](https://github.com/yksanjo)
 
-## API Endpoints
+Project Link: [https://github.com/yksanjo/signal-based-recruitment](https://github.com/yksanjo/signal-based-recruitment)
 
-- `POST /api/ingest` - Ingest job postings
-- `GET /api/buckets` - Get all action buckets
-- `POST /api/buckets` - Process signals into buckets
-- `GET /api/buckets/[id]/candidates` - Get candidates for a bucket
-- `POST /api/buckets/[id]/trigger` - Trigger workflow for a bucket
-- `GET /api/stats` - Get platform statistics
-- `GET /api/signals` - Get recent signals
-- `GET /api/icp-config` - Get ICP configuration
-- `POST /api/icp-config` - Update ICP configuration
+---
 
-## Production Considerations
-
-### Scraping
-
-The current implementation includes mock scrapers. For production:
-
-1. **LinkedIn**: Use LinkedIn Jobs API or services like Apify, ScraperAPI
-2. **Indeed**: Use Indeed's API or scraping services
-3. **Glassdoor**: Use Glassdoor API or scraping services
-
-### Enrichment
-
-- Integrate with Apollo.io API for company enrichment
-- Use Clay.com for additional data enrichment
-- Consider caching enrichment data to reduce API calls
-
-### Database
-
-- Use connection pooling for production
-- Set up database backups
-- Monitor query performance
-
-### Scaling
-
-- Use Vercel's serverless functions (automatic)
-- Consider background job processing (e.g., Vercel Cron)
-- Implement rate limiting for API endpoints
-- Cache frequently accessed data
-
-## License
-
-MIT
-
-
-
-
+**Note**: This is an MVP/prototype with 22 commits of original development work. The architecture is designed for scalability, with mock implementations where external APIs would be integrated in production.
